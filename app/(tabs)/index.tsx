@@ -1,31 +1,27 @@
-import { StyleSheet } from 'react-native';
+import { Link, useFocusEffect } from "expo-router";
+import { useEffect, useState } from "react";
+import { Text, View } from "react-native";
 
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
-
-export default function TabOneScreen() {
+export default function Page() {
+  const [data, setData] = useState<any[]>([]);
+  useEffect(() => {
+    fetch("https://dummyjson.com/products")
+      .then((res) => res.json())
+      .then(({ products }) => {
+        setData(products);
+      });
+  }, []);
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      {data.map((product) => {
+        return (
+          <Link href={`/product/${product.id}`}>
+            <View>
+              <Text>{product.title}</Text>
+            </View>
+          </Link>
+        );
+      })}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
-});
